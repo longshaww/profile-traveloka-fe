@@ -1,0 +1,55 @@
+$gray-nav2: #f6f6f6;
+
+.position_1 {
+  background: #fff;
+  -webkit-font-smoothing: antialiased;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  z-index: 4;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  transition: transform 0.4s ease;
+  align-items: center;
+}
+
+.header-navbar {
+  height: 102px;
+}
+
+.header-navbar:focus {
+  box-shadow: none;
+}
+
+.bg_nav_2 {
+  background-color: $gray-nav2;
+}
+
+button.dropdown-toggle.btn.btn-secondary {
+  color: #000;
+  border: none;
+  background-color: unset;
+  &:hover {
+    color: #000;
+    border: none;
+    background-color: unset;
+  }
+  &:focus {
+    color: #000;
+    border: none;
+    background-color: unset;
+    box-shadow: none;
+  }
+}
+
+#select_item {
+  box-shadow: none;
+  width: auto;
+  border: none;
+  background-color: $gray-nav2;
+}
+
+#set_width {
+  width: auto;
+}

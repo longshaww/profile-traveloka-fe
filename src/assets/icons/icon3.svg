@@ -1,0 +1,26 @@
+<svg
+  fill="#0770CD"
+  height="16"
+  width="16"
+  viewBox="0 0 16 16"
+  stroke="currentColor"
+  stroke-linecap="round"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+><g fill="none" fill-rule="evenodd" stroke-width="0"><rect
+      width="16"
+      height="16"
+    /><rect
+      width="12"
+      height="14"
+      x="2"
+      y="1"
+      stroke="#0770CD"
+      stroke-width="2"
+      rx="2"
+    /><path stroke="#0770CD" stroke-width="2" d="M2 4L14 4M5 4L5 15" /><path
+      stroke="#0770CD"
+      stroke-linecap="round"
+      stroke-width="2"
+      d="M8 8L11 8M8 11L11 11"
+    /></g></svg>
