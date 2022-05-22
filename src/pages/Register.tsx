@@ -1,36 +1,13 @@
-import { LocalizationProvider, DatePicker } from "@mui/lab";
-import { Alert, Box, Button, Snackbar, TextField } from "@mui/material";
+import { Alert, Snackbar } from "@mui/material";
 import React, { useState } from "react";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import moment from "moment";
+import { UserRegisterDTO } from "../model/register.dto";
+import UserInfoRegister from "../components/Register/UserInfo.register";
+import CompanyInfoRegister from "../components/Register/CompanyInfo.register";
+import UsernamePasswordRegister from "../components/Register/UsernamePassword.register";
 import { useNavigate } from "react-router-dom";
 
-interface Props {}
-
-interface UserRegisterDTO {
-	username: string;
-	password: string;
-	name: string;
-	email: string;
-	gender: number | string;
-	dob: Date;
-	phone: string;
-	address: string;
-	type: string;
-	reward: number | string;
-}
-
-const gender = [
-	{
-		value: 0,
-		label: "Nam",
-	},
-	{
-		value: 1,
-		label: "Nữ",
-	},
-];
-
-const Register: React.FC<Props> = (props) => {
+const Register: React.FC = () => {
 	const navigate = useNavigate();
 	const [inputs, setInputs] = useState<UserRegisterDTO>({
 		username: "",
@@ -38,45 +15,53 @@ const Register: React.FC<Props> = (props) => {
 		name: "",
 		email: "",
 		gender: 0,
-		dob: new Date(),
+		dob: moment(new Date()).format("YYYY/MM/DD"),
 		phone: "",
 		address: "",
 		type: "USER",
 		reward: "",
+		company_name: "",
+		services: [],
 	});
+	const [companyChecked, setCompanyChecked] = useState(false);
+	const [serviceChecked, setServiceChecked] = useState<string[]>([]);
 
 	const [snackBar, setOpenSnackbar] = useState(false);
 
-	const handleChange = (event: any) => {
+	const handleInputChange = (event: any) => {
 		const name = event.target.name;
 		const value = event.target.value;
 		setInputs((values) => ({ ...values, [name]: value }));
 	};
-	const handleDOBChange = (newValue: any) => {
-		setInputs({ ...inputs, dob: newValue });
-	};
 
-	const handleGenderChange = (e: any) => {
-		setInputs({ ...inputs, gender: parseInt(e.target.value) });
+	const isAdmin = function (): string {
+		if (companyChecked) {
+			return "ADMIN";
+		} else {
+			return "USER";
+		}
 	};
 
 	async function onRegisterSubmit(e: any) {
 		if (
-			(inputs.address === "" || inputs.email === "",
-			inputs.gender === "",
-			inputs.name === "",
-			inputs.password === "",
-			inputs.phone === "",
-			inputs.username === "")
+			inputs.address === "" ||
+			inputs.email === "" ||
+			inputs.gender === "" ||
+			inputs.name === "" ||
+			inputs.password === "" ||
+			inputs.phone === "" ||
+			inputs.username === ""
 		) {
 			setOpenSnackbar(true);
 			return;
 		}
+		const type = isAdmin();
+		const data = { ...inputs, services: serviceChecked, type };
 		const req = await fetch(
-			`http://localhost:5000/api/user/postRegister`,
+			`${process.env.REACT_APP_API_URL}api/user/postRegister`,
 			{
 				method: "POST",
-				body: JSON.stringify(inputs),
+				body: JSON.stringify(data),
 				headers: {
 					Accept: "application/json",
 					"Content-Type": "application/json",
@@ -84,8 +69,11 @@ const Register: React.FC<Props> = (props) => {
 			}
 		);
 		const response = await req.json();
-		navigate("/login");
-		console.log(response);
+		if (response.success) {
+			navigate("/login");
+		} else {
+			setOpenSnackbar(true);
+		}
 	}
 
 	const handleCloseSnackBar = (
@@ -100,126 +88,24 @@ const Register: React.FC<Props> = (props) => {
 	};
 	return (
 		<>
-			<h3>Thông tin cá nhân</h3>
-			<Box sx={{ marginBottom: 3 }}>
-				<TextField
-					id="outlined-basic"
-					label="Họ và tên"
-					onChange={handleChange}
-					value={inputs.name}
-					name="name"
-					variant="outlined"
-					fullWidth
-				/>
-			</Box>
-			<Box
-				sx={{
-					display: "grid",
-					gridTemplateColumns: "repeat(2, 1fr)",
-					marginBottom: 3,
-				}}
-			>
-				<Box sx={{ marginRight: 2 }}>
-					<TextField
-						id="outlined-basic"
-						label="Giới tính"
-						select
-						onChange={handleGenderChange}
-						value={inputs.gender}
-						name="gender"
-						SelectProps={{
-							native: true,
-						}}
-						variant="outlined"
-						fullWidth
-					>
-						{gender.map((option) => (
-							<option
-								key={option.value}
-								value={option.value}
-							>
-								{option.label}
-							</option>
-						))}
-					</TextField>
-				</Box>
-
-				<LocalizationProvider dateAdapter={AdapterMoment}>
-					<DatePicker
-						label="Ngày sinh"
-						inputFormat="DD/MM/YYYY"
-						value={inputs.dob}
-						onChange={handleDOBChange}
-						renderInput={(params) => (
-							<TextField {...params} />
-						)}
-					/>
-				</LocalizationProvider>
-			</Box>
-			<Box sx={{ marginBottom: 3 }}>
-				<TextField
-					id="outlined-basic"
-					label="Địa chỉ"
-					onChange={handleChange}
-					value={inputs.address}
-					name="address"
-					variant="outlined"
-					fullWidth
-				/>
-			</Box>
-			<Box
-				sx={{
-					display: "grid",
-					gridTemplateColumns: "repeat(2, 1fr)",
-				}}
-			>
-				<Box sx={{ marginRight: 2 }}>
-					<TextField
-						id="outlined-basic"
-						label="Email"
-						onChange={handleChange}
-						value={inputs.email}
-						name="email"
-						variant="outlined"
-						fullWidth
-					/>
-				</Box>
-				<TextField
-					id="outlined-basic"
-					label="Số điện thoại"
-					onChange={handleChange}
-					value={inputs.phone}
-					name="phone"
-					variant="outlined"
-				/>
-			</Box>
-			<h3 className="mt-3">Tạo tài khoản</h3>
-			<Box sx={{ marginBottom: 3 }}>
-				<TextField
-					id="outlined-basic"
-					label="Tên đăng nhập"
-					onChange={handleChange}
-					value={inputs.username}
-					name="username"
-					variant="outlined"
-					fullWidth
-				/>
-			</Box>
-			<Box sx={{ marginBottom: 3 }}>
-				<TextField
-					id="outlined-basic"
-					label="Password"
-					name="password"
-					onChange={handleChange}
-					value={inputs.password}
-					variant="outlined"
-					type="password"
-					fullWidth
-				/>
-			</Box>
-			<Button variant="contained" fullWidth onClick={onRegisterSubmit}>
-				Đăng kí
-			</Button>
+			<UserInfoRegister
+				inputs={inputs}
+				setInputs={setInputs}
+				handleInputChange={handleInputChange}
+			/>
+			<CompanyInfoRegister
+				inputs={inputs}
+				companyChecked={companyChecked}
+				setCompanyChecked={setCompanyChecked}
+				serviceChecked={serviceChecked}
+				setServiceChecked={setServiceChecked}
+				handleInputChange={handleInputChange}
+			/>
+			<UsernamePasswordRegister
+				onRegisterSubmit={onRegisterSubmit}
+				inputs={inputs}
+				handleInputChange={handleInputChange}
+			/>
 			<Snackbar
 				open={snackBar}
 				autoHideDuration={3000}

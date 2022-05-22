@@ -10,7 +10,7 @@ import {
 	DropdownToggle,
 	UncontrolledDropdown,
 } from "reactstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../assets/css/navbar.scss";
 import "../assets/css/app.scss";
 import { ReactComponent as Logo } from "../assets/icons/logo.svg";
@@ -18,9 +18,11 @@ import { ReactComponent as Icon1 } from "../assets/icons/icon1.svg";
 import { ReactComponent as Icon2 } from "../assets/icons/icon2.svg";
 import { ReactComponent as Icon3 } from "../assets/icons/icon3.svg";
 
-const NavbarApp: React.FC = () => {
+const NavbarApp: React.FC<any> = ({ user }) => {
+	const navigate = useNavigate();
 	const [isOpen, setIsOpen] = useState(false);
 	const toggle = () => setIsOpen(!isOpen);
+
 	const menu = [
 		{
 			title: "Vận chuyển",
@@ -93,6 +95,11 @@ const NavbarApp: React.FC = () => {
 			],
 		},
 	];
+
+	const onLogOutClick = () => {
+		localStorage.removeItem("access_token");
+		navigate("/login");
+	};
 
 	return (
 		<>
@@ -185,26 +192,60 @@ const NavbarApp: React.FC = () => {
 											</DropdownMenu>
 										</UncontrolledDropdown>
 									</NavItem>
-									<NavItem>
-										<Link
-											to="/login"
-											className="nav-link"
-										>
-											<span className="ps-1">
-												Đăng nhập
-											</span>
-										</Link>
-									</NavItem>
-									<NavItem>
-										<Link
-											to="/register"
-											className="nav-link"
-										>
-											<span className="ps-1">
-												Đăng ký
-											</span>
-										</Link>
-									</NavItem>
+									{!localStorage.getItem(
+										"access_token"
+									) && (
+										<>
+											<NavItem>
+												<Link
+													to="/login"
+													className="nav-link"
+												>
+													<span className="ps-1">
+														Đăng nhập
+													</span>
+												</Link>
+											</NavItem>
+											<NavItem>
+												<Link
+													to="/register"
+													className="nav-link"
+												>
+													<span className="ps-1">
+														Đăng ký
+													</span>
+												</Link>
+											</NavItem>
+										</>
+									)}
+									{localStorage.getItem(
+										"access_token"
+									) && (
+										<NavItem>
+											<UncontrolledDropdown>
+												<DropdownToggle
+													caret
+												>
+													{user?.name}
+												</DropdownToggle>
+												<DropdownMenu>
+													<Link
+														className="text-decoration-none dropdown-item"
+														to="/user/profile"
+													>
+														View
+													</Link>
+													<DropdownItem
+														onClick={
+															onLogOutClick
+														}
+													>
+														Logout
+													</DropdownItem>
+												</DropdownMenu>
+											</UncontrolledDropdown>
+										</NavItem>
+									)}
 								</Nav>
 							</Collapse>
 						</Navbar>

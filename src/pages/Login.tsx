@@ -1,17 +1,27 @@
 import { Box, TextField, Button, Snackbar, Alert } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createSearchParams, Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-
-interface Props {}
 
 interface UserLoginDTO {
 	username: string;
 	password: string;
 }
 
-const Login: React.FC<Props> = (props) => {
+const Login: React.FC = () => {
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		const checkLogin = localStorage.getItem("access_token");
+		if (checkLogin) {
+			navigate({
+				pathname: "/",
+				search: `?${createSearchParams({
+					accessToken: checkLogin,
+				})}`,
+			});
+		}
+	}, [navigate]);
 
 	const [inputs, setInputs] = useState<UserLoginDTO>({
 		username: "",
@@ -31,14 +41,17 @@ const Login: React.FC<Props> = (props) => {
 			setOpenSnackbar(true);
 			return;
 		}
-		const req = await fetch(`http://localhost:5000/api/user/postLogin`, {
-			method: "POST",
-			body: JSON.stringify(inputs),
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
-			},
-		});
+		const req = await fetch(
+			`${process.env.REACT_APP_API_URL}api/user/postLogin`,
+			{
+				method: "POST",
+				body: JSON.stringify(inputs),
+				headers: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				},
+			}
+		);
 		const response = await req.json();
 		if (response.success) {
 			navigate({
@@ -47,6 +60,7 @@ const Login: React.FC<Props> = (props) => {
 					accessToken: response.accessToken,
 				})}`,
 			});
+			localStorage.setItem("access_token", response.accessToken);
 		} else {
 			setOpenSnackbar(true);
 		}
