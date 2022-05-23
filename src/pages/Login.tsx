@@ -1,6 +1,6 @@
 import { Box, TextField, Button, Snackbar, Alert } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { createSearchParams, Link } from "react-router-dom";
+import { createSearchParams, Link, useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 interface UserLoginDTO {
@@ -10,6 +10,8 @@ interface UserLoginDTO {
 
 const Login: React.FC = () => {
 	const navigate = useNavigate();
+	const [searchParams, setSearchParams] = useSearchParams();
+	const urlRedirect = searchParams.get("callback");
 
 	useEffect(() => {
 		const checkLogin = localStorage.getItem("access_token");
@@ -54,13 +56,11 @@ const Login: React.FC = () => {
 		);
 		const response = await req.json();
 		if (response.success) {
-			navigate({
-				pathname: "/",
-				search: `?${createSearchParams({
-					accessToken: response.accessToken,
-				})}`,
-			});
 			localStorage.setItem("access_token", response.accessToken);
+			const url = urlRedirect
+				? urlRedirect + "?access_token=" + response.accessToken
+				: "/";
+			window.location.href = url;
 		} else {
 			setOpenSnackbar(true);
 		}
