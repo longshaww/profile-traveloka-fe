@@ -1,8 +1,8 @@
 version: "3.9"
 
 services:
-     profile-vy-02:
-          container_name: profile-fe
+     react-frontend:
+          container_name: profile-vy-02
           build:
                context: .
                dockerfile: Dockerfile
