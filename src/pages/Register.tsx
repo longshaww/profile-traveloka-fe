@@ -58,7 +58,7 @@ const Register: React.FC = () => {
 		const type = isAdmin();
 		const data = { ...inputs, services: serviceChecked, type };
 		const req = await fetch(
-			`${process.env.REACT_APP_API_URL}api/user/postRegister`,
+			`${process.env.REACT_APP_API_URL}/api/user/postRegister`,
 			{
 				method: "POST",
 				body: JSON.stringify(data),

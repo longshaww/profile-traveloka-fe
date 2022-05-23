@@ -44,7 +44,7 @@ const Login: React.FC = () => {
 			return;
 		}
 		const req = await fetch(
-			`${process.env.REACT_APP_API_URL}api/user/postLogin`,
+			`${process.env.REACT_APP_API_URL}/api/user/postLogin`,
 			{
 				method: "POST",
 				body: JSON.stringify(inputs),

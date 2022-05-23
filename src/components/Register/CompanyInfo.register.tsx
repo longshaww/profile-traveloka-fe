@@ -16,7 +16,7 @@ const CompanyInfoRegister: React.FC<any> = ({
 	useEffect(() => {
 		async function getServices() {
 			const req = await fetch(
-				`${process.env.REACT_APP_API_URL}api/service/`
+				`${process.env.REACT_APP_API_URL}/api/service/`
 			);
 			const response = await req.json();
 			setServiceList(response.listService);

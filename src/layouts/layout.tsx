@@ -17,7 +17,7 @@ const Layout: React.FC<Props> = ({ user, fetchUser }) => {
 		const accessToken = localStorage.getItem("access_token");
 		async function getUser() {
 			const req = await fetch(
-				`${process.env.REACT_APP_API_URL}api/user/me`,
+				`${process.env.REACT_APP_API_URL}/api/user/me`,
 				{
 					headers: {
 						authorization: `Bearer ${accessToken}`,
